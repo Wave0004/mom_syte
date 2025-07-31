@@ -1,7 +1,4 @@
-// Инициализация EmailJS
-(function() {
-    emailjs.init("YOUR_PUBLIC_KEY"); // Замените на ваш публичный ключ
-})();
+// Готовое решение без настройки API ключей
 
 // Переменные
 let yandexMap;
@@ -150,8 +147,21 @@ async function handleAppointmentSubmit(e) {
     const formData = new FormData(appointmentForm);
     const data = Object.fromEntries(formData);
     
+    // Нормализуем названия полей для валидации
+    const normalizedData = {
+        name: data['Имя клиента'],
+        phone: data['Телефон для связи'],
+        email: data['Email клиента'],
+        format: data['Формат консультации'],
+        service: data['Тип услуги'],
+        date: data['Желаемая дата'],
+        time: data['Желаемое время'],
+        message: data['Дополнительная информация от клиента'],
+        privacy: data['privacy']
+    };
+    
     // Валидация
-    if (!validateAppointmentForm(data)) {
+    if (!validateAppointmentForm(normalizedData)) {
         return;
     }
 
@@ -159,35 +169,44 @@ async function handleAppointmentSubmit(e) {
     showFormLoader(appointmentForm);
 
     try {
-        // Отправка через EmailJS
-        const templateParams = {
-            from_name: data.name,
-            from_phone: data.phone,
-            from_email: data.email || 'Не указан',
-            service_type: getServiceName(data.service),
-            format: data.format === 'online' ? 'Онлайн' : 'Очно в кабинете',
-            preferred_date: data.date || 'Не указана',
-            preferred_time: data.time || 'Не указано',
-            message: data.message || 'Дополнительной информации нет',
-            reply_to: data.email || 'noreply@example.com'
-        };
-
-        await emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', templateParams);
-        
-        // Сохранить данные
-        appointmentData.push({
-            ...data,
-            id: Date.now(),
-            timestamp: new Date().toISOString()
+        // Отправка через Formspree
+        const response = await fetch(appointmentForm.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
+            }
         });
 
-        // Показать успех
-        showFormResult(appointmentForm, 'success', 'Заявка успешно отправлена! Я свяжусь с вами в течение 24 часов.');
-        appointmentForm.reset();
+        if (response.ok) {
+            // Сохранить данные локально
+            appointmentData.push({
+                ...normalizedData,
+                id: Date.now(),
+                timestamp: new Date().toISOString()
+            });
+
+            // Показать успех
+            showFormResult(appointmentForm, 'success', 
+                'Заявка успешно отправлена! Уведомление пришло психологу на email. ' +
+                'Елена свяжется с вами в течение 24 часов для подтверждения записи.');
+            appointmentForm.reset();
+        } else {
+            throw new Error('Ошибка сервера');
+        }
 
     } catch (error) {
         console.error('Ошибка отправки:', error);
-        showFormResult(appointmentForm, 'error', 'Произошла ошибка при отправке заявки. Попробуйте еще раз или свяжитесь по телефону.');
+        showFormResult(appointmentForm, 'error', 
+            'Произошла ошибка при отправке заявки. Проверьте интернет соединение и попробуйте еще раз. ' +
+            'Или свяжитесь напрямую по телефону: +7 (812) 777-88-99');
+    } finally {
+        // Убрать загрузку
+        const submitBtn = appointmentForm.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Отправить заявку';
+        }
     }
 }
 
@@ -198,46 +217,66 @@ async function handleReviewSubmit(e) {
     const formData = new FormData(reviewForm);
     const data = Object.fromEntries(formData);
     
-    if (!validateReviewForm(data)) {
+    // Нормализуем названия полей для валидации
+    const normalizedData = {
+        reviewName: data['Имя автора отзыва'],
+        reviewService: data['Услуга по которой отзыв'],
+        rating: data['Оценка в звездах']?.replace(' звезд', '').replace(' звезды', '').replace(' звезда', ''),
+        reviewText: data['Текст отзыва']
+    };
+    
+    if (!validateReviewForm(normalizedData)) {
         return;
     }
 
     showFormLoader(reviewForm);
 
     try {
-        // Создать новый отзыв
-        const newReview = {
-            id: Date.now(),
-            name: data.reviewName,
-            service: data.reviewService,
-            rating: parseInt(data.rating),
-            text: data.reviewText,
-            timestamp: new Date().toISOString()
-        };
+        // Отправка через Formspree
+        const response = await fetch(reviewForm.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
 
-        // Добавить в массив
-        reviewsData.push(newReview);
+        if (response.ok) {
+            // Создать новый отзыв для отображения на сайте
+            const newReview = {
+                id: Date.now(),
+                name: normalizedData.reviewName,
+                service: normalizedData.reviewService,
+                rating: parseInt(normalizedData.rating),
+                text: normalizedData.reviewText,
+                timestamp: new Date().toISOString()
+            };
 
-        // Отправить уведомление психологу
-        const templateParams = {
-            reviewer_name: data.reviewName,
-            service_type: getServiceName(data.reviewService),
-            rating: '⭐'.repeat(parseInt(data.rating)),
-            review_text: data.reviewText,
-            review_date: new Date().toLocaleDateString('ru-RU')
-        };
+            // Добавить в массив
+            reviewsData.push(newReview);
 
-        await emailjs.send('YOUR_SERVICE_ID', 'YOUR_REVIEW_TEMPLATE_ID', templateParams);
-
-        // Добавить отзыв на страницу
-        addReviewToPage(newReview);
-        
-        showFormResult(reviewForm, 'success', 'Спасибо за ваш отзыв! Он появится на сайте после модерации.');
-        reviewForm.reset();
+            // Добавить отзыв на страницу сразу
+            addReviewToPage(newReview);
+            
+            showFormResult(reviewForm, 'success', 
+                'Спасибо за ваш отзыв! Уведомление отправлено психологу. ' +
+                'Отзыв добавлен на сайт и будет проверен в ближайшее время.');
+            reviewForm.reset();
+        } else {
+            throw new Error('Ошибка сервера');
+        }
 
     } catch (error) {
         console.error('Ошибка отправки отзыва:', error);
-        showFormResult(reviewForm, 'error', 'Произошла ошибка при отправке отзыва. Попробуйте еще раз.');
+        showFormResult(reviewForm, 'error', 
+            'Произошла ошибка при отправке отзыва. Проверьте интернет соединение и попробуйте еще раз.');
+    } finally {
+        // Убрать загрузку
+        const submitBtn = reviewForm.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Отправить отзыв';
+        }
     }
 }
 

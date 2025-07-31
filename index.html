@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://api-maps.yandex.ru/2.1/?apikey=YOUR_API_KEY&lang=ru_RU" type="text/javascript"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
 </head>
 <body>
     <!-- Заголовок и навигация -->
@@ -166,25 +166,30 @@
                         </ul>
                     </div>
                     
-                    <form class="appointment-form" id="appointmentForm">
+                    <form class="appointment-form" id="appointmentForm" action="https://formspree.io/f/xwkgobgr" method="POST">
+                        <!-- Скрытые поля для настройки Formspree -->
+                        <input type="hidden" name="_to" value="wave.capuletti@gmail.com">
+                        <input type="hidden" name="_subject" value="🔔 Новая заявка на консультацию - Сайт психолога">
+                        <input type="hidden" name="_template" value="table">
+                        
                         <div class="form-group">
                             <label for="name">Имя *</label>
-                            <input type="text" id="name" name="name" required>
+                            <input type="text" id="name" name="Имя клиента" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="phone">Телефон *</label>
-                            <input type="tel" id="phone" name="phone" required>
+                            <input type="tel" id="phone" name="Телефон для связи" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="email">Email</label>
-                            <input type="email" id="email" name="email">
+                            <input type="email" id="email" name="Email клиента">
                         </div>
                         
                         <div class="form-group">
                             <label for="format">Формат консультации *</label>
-                            <select id="format" name="format" required>
+                            <select id="format" name="Формат консультации" required>
                                 <option value="">Выберите формат</option>
                                 <option value="online">Онлайн</option>
                                 <option value="offline">Очно в кабинете</option>
@@ -193,7 +198,7 @@
                         
                         <div class="form-group">
                             <label for="service">Тип консультации *</label>
-                            <select id="service" name="service" required>
+                            <select id="service" name="Тип услуги" required>
                                 <option value="">Выберите услугу</option>
                                 <option value="individual">Индивидуальная консультация</option>
                                 <option value="family">Семейная терапия</option>
@@ -204,12 +209,12 @@
                         
                         <div class="form-group">
                             <label for="date">Предпочтительная дата</label>
-                            <input type="date" id="date" name="date">
+                            <input type="date" id="date" name="Желаемая дата">
                         </div>
                         
                         <div class="form-group">
                             <label for="time">Предпочтительное время</label>
-                            <select id="time" name="time">
+                            <select id="time" name="Желаемое время">
                                 <option value="">Выберите время</option>
                                 <option value="09:00">09:00</option>
                                 <option value="10:00">10:00</option>
@@ -228,7 +233,7 @@
                         
                         <div class="form-group">
                             <label for="message">Дополнительная информация</label>
-                            <textarea id="message" name="message" rows="4" placeholder="Опишите кратко ваш запрос или вопросы"></textarea>
+                            <textarea id="message" name="Дополнительная информация от клиента" rows="4" placeholder="Опишите кратко ваш запрос или вопросы"></textarea>
                         </div>
                         
                         <div class="form-group checkbox-group">
@@ -296,15 +301,20 @@
                 <!-- Форма добавления отзыва -->
                 <div class="add-review">
                     <h3>Оставить отзыв</h3>
-                    <form class="review-form" id="reviewForm">
+                                            <form class="review-form" id="reviewForm" action="https://formspree.io/f/xwkgobgr" method="POST">
+                        <!-- Скрытые поля для настройки Formspree -->
+                        <input type="hidden" name="_to" value="wave.capuletti@gmail.com">
+                        <input type="hidden" name="_subject" value="⭐ Новый отзыв на сайте психолога">
+                        <input type="hidden" name="_template" value="table">
+                        
                         <div class="form-group">
                             <label for="reviewName">Имя *</label>
-                            <input type="text" id="reviewName" name="reviewName" required>
+                            <input type="text" id="reviewName" name="Имя автора отзыва" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="reviewService">Услуга</label>
-                            <select id="reviewService" name="reviewService">
+                            <select id="reviewService" name="Услуга по которой отзыв">
                                 <option value="">Выберите услугу</option>
                                 <option value="individual">Индивидуальная консультация</option>
                                 <option value="family">Семейная терапия</option>
@@ -316,22 +326,22 @@
                         <div class="form-group">
                             <label for="reviewRating">Оценка *</label>
                             <div class="rating-input">
-                                <input type="radio" id="star5" name="rating" value="5" required>
+                                <input type="radio" id="star5" name="Оценка в звездах" value="5 звезд" required>
                                 <label for="star5">⭐</label>
-                                <input type="radio" id="star4" name="rating" value="4">
+                                <input type="radio" id="star4" name="Оценка в звездах" value="4 звезды">
                                 <label for="star4">⭐</label>
-                                <input type="radio" id="star3" name="rating" value="3">
+                                <input type="radio" id="star3" name="Оценка в звездах" value="3 звезды">
                                 <label for="star3">⭐</label>
-                                <input type="radio" id="star2" name="rating" value="2">
+                                <input type="radio" id="star2" name="Оценка в звездах" value="2 звезды">
                                 <label for="star2">⭐</label>
-                                <input type="radio" id="star1" name="rating" value="1">
+                                <input type="radio" id="star1" name="Оценка в звездах" value="1 звезда">
                                 <label for="star1">⭐</label>
                             </div>
                         </div>
                         
                         <div class="form-group">
                             <label for="reviewText">Ваш отзыв *</label>
-                            <textarea id="reviewText" name="reviewText" rows="4" required placeholder="Поделитесь своим опытом"></textarea>
+                            <textarea id="reviewText" name="Текст отзыва" rows="4" required placeholder="Поделитесь своим опытом"></textarea>
                         </div>
                         
                         <button type="submit" class="btn btn-secondary">Отправить отзыв</button>
@@ -397,7 +407,7 @@
                             <div class="contact-icon">📱</div>
                             <div>
                                 <h3>Телефон</h3>
-                                <p><a href="tel:+79999999999">+7 (999) 999-99-99</a></p>
+                                <p><a href="tel:+78127778899">+7 (812) 777-88-99</a></p>
                             </div>
                         </div>
 
@@ -405,7 +415,7 @@
                             <div class="contact-icon">✉️</div>
                             <div>
                                 <h3>Email</h3>
-                                <p><a href="mailto:elena.vasileva@example.com">elena.vasileva@example.com</a></p>
+                                <p><a href="mailto:elena.vasileva.psy@gmail.com">elena.vasileva.psy@gmail.com</a></p>
                             </div>
                         </div>
 
@@ -502,8 +512,8 @@
                     <p>Санкт-Петербург • Онлайн</p>
                 </div>
                 <div class="footer-contacts">
-                    <p>📞 <a href="tel:+79999999999">+7 (999) 999-99-99</a></p>
-                    <p>✉️ <a href="mailto:elena.vasileva@example.com">elena.vasileva@example.com</a></p>
+                    <p>📞 <a href="tel:+78127778899">+7 (812) 777-88-99</a></p>
+                    <p>✉️ <a href="mailto:elena.vasileva.psy@gmail.com">elena.vasileva.psy@gmail.com</a></p>
                 </div>
                 <div class="footer-social">
                     <a href="#" class="social-link">ВК</a>
