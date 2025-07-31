@@ -616,6 +616,7 @@ body {
     display: flex;
     flex-direction: row-reverse;
     gap: 0.5rem;
+    justify-content: flex-end;
 }
 
 .rating-input input[type="radio"] {
@@ -623,16 +624,70 @@ body {
 }
 
 .rating-input label {
-    font-size: 1.5rem;
-    color: #DDD;
+    font-size: 2rem;
+    color: #E0E0E0;
     cursor: pointer;
-    transition: color var(--transition-fast);
+    transition: all var(--transition-normal);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-.rating-input input[type="radio"]:checked ~ label,
+.rating-input label:hover {
+    color: #FFD700;
+    transform: scale(1.1);
+}
+
+/* Подсветка выбранных звезд */
+.rating-input input[type="radio"]:checked ~ label {
+    color: #FFD700;
+}
+
+.rating-input:hover label {
+    color: #E0E0E0;
+}
+
 .rating-input label:hover,
 .rating-input label:hover ~ label {
     color: #FFD700;
+}
+
+/* Выбранные звезды остаются золотыми */
+.rating-input.selected input[type="radio"]:checked ~ label {
+    color: #FFD700;
+}
+
+/* Дополнительная подсветка для активных звезд */
+.rating-input label.active {
+    color: #FFD700;
+}
+
+/* Обратная связь рейтинга */
+.rating-feedback {
+    margin-top: 0.5rem;
+    color: var(--primary-color);
+    font-weight: 500;
+    font-size: 0.9rem;
+    animation: fadeInUp 0.3s ease;
+    text-align: center;
+}
+
+/* Подсказка для рейтинга */
+.rating-hint {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+/* Мобильная адаптация для звезд */
+@media (max-width: 768px) {
+    .rating-input label {
+        font-size: 2.5rem;
+        padding: 0.2rem;
+    }
+    
+    .rating-input {
+        gap: 0.3rem;
+    }
 }
 
 /* Документы */
@@ -1195,4 +1250,20 @@ body {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+
+.psychologist-photo {
+    width: 300px;
+    height: 400px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-medium);
+}
+
+@media (max-width: 768px) {
+    .psychologist-photo {
+        width: 250px;
+        height: 320px;
+    }
 }

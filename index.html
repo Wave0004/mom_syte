@@ -10,6 +10,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://api-maps.yandex.ru/2.1/?apikey=YOUR_API_KEY&lang=ru_RU" type="text/javascript"></script>
+    <!-- ЮKassa SDK -->
+    <script src="https://yookassa.ru/checkout-widget/v1/checkout-widget.js"></script>
 
 </head>
 <body>
@@ -71,10 +73,7 @@
                         </div>
                     </div>
                     <div class="hero-image">
-                        <div class="image-placeholder">
-                            <span>Фото психолога</span>
-                            <p>Здесь будет размещено ваше фото</p>
-                        </div>
+                        <img src="images/photo.jpg" alt="Психолог Васильева Елена" class="psychologist-photo">
                     </div>
                 </div>
             </div>
@@ -166,11 +165,7 @@
                         </ul>
                     </div>
                     
-                    <form class="appointment-form" id="appointmentForm" action="https://formspree.io/f/xwkgobgr" method="POST">
-                        <!-- Скрытые поля для настройки Formspree -->
-                        <input type="hidden" name="_to" value="wave.capuletti@gmail.com">
-                        <input type="hidden" name="_subject" value="🔔 Новая заявка на консультацию - Сайт психолога">
-                        <input type="hidden" name="_template" value="table">
+                    <form class="appointment-form" id="appointmentForm">
                         
                         <div class="form-group">
                             <label for="name">Имя *</label>
@@ -244,7 +239,7 @@
                             </label>
                         </div>
                         
-                        <button type="submit" class="btn btn-primary">Отправить заявку</button>
+                        <button type="button" class="btn btn-primary" onclick="sendViaEmail()">📧 Отправить заявку</button>
                         
                         <div class="form-result" id="formResult"></div>
                     </form>
@@ -301,11 +296,7 @@
                 <!-- Форма добавления отзыва -->
                 <div class="add-review">
                     <h3>Оставить отзыв</h3>
-                                            <form class="review-form" id="reviewForm" action="https://formspree.io/f/xwkgobgr" method="POST">
-                        <!-- Скрытые поля для настройки Formspree -->
-                        <input type="hidden" name="_to" value="wave.capuletti@gmail.com">
-                        <input type="hidden" name="_subject" value="⭐ Новый отзыв на сайте психолога">
-                        <input type="hidden" name="_template" value="table">
+                                            <form class="review-form" id="reviewForm">
                         
                         <div class="form-group">
                             <label for="reviewName">Имя *</label>
@@ -325,6 +316,7 @@
                         
                         <div class="form-group">
                             <label for="reviewRating">Оценка *</label>
+                            <div class="rating-hint">Нажмите на звезды для выбора оценки</div>
                             <div class="rating-input">
                                 <input type="radio" id="star5" name="Оценка в звездах" value="5 звезд" required>
                                 <label for="star5">⭐</label>
@@ -344,7 +336,7 @@
                             <textarea id="reviewText" name="Текст отзыва" rows="4" required placeholder="Поделитесь своим опытом"></textarea>
                         </div>
                         
-                        <button type="submit" class="btn btn-secondary">Отправить отзыв</button>
+                        <button type="button" class="btn btn-secondary" onclick="sendReviewViaEmail()">⭐ Отправить отзыв</button>
                         
                         <div class="form-result" id="reviewResult"></div>
                     </form>
@@ -352,41 +344,7 @@
             </div>
         </section>
 
-        <!-- Документы -->
-        <section class="documents" id="documents">
-            <div class="container">
-                <h2 class="section-title">Документы и квалификация</h2>
-                <div class="documents-grid">
-                    <div class="document-card">
-                        <div class="document-icon">🎓</div>
-                        <h3>Диплом о высшем образовании</h3>
-                        <p>Психология, СПбГУ, 2018</p>
-                        <button class="btn btn-outline" onclick="openDocumentModal('diploma')">Посмотреть</button>
-                    </div>
-
-                    <div class="document-card">
-                        <div class="document-icon">📜</div>
-                        <h3>Сертификат профессиональной переподготовки</h3>
-                        <p>Клиническая психология, 2019</p>
-                        <button class="btn btn-outline" onclick="openDocumentModal('certificate1')">Посмотреть</button>
-                    </div>
-
-                    <div class="document-card">
-                        <div class="document-icon">🏆</div>
-                        <h3>Сертификат повышения квалификации</h3>
-                        <p>Семейная терапия, 2022</p>
-                        <button class="btn btn-outline" onclick="openDocumentModal('certificate2')">Посмотреть</button>
-                    </div>
-
-                    <div class="document-card">
-                        <div class="document-icon">✅</div>
-                        <h3>Сертификат психологического общества</h3>
-                        <p>Членство в РПО, 2020</p>
-                        <button class="btn btn-outline" onclick="openDocumentModal('certificate3')">Посмотреть</button>
-                    </div>
-                </div>
-            </div>
-        </section>
+        
 
         <!-- Контакты -->
         <section class="contacts" id="contacts">
@@ -407,7 +365,7 @@
                             <div class="contact-icon">📱</div>
                             <div>
                                 <h3>Телефон</h3>
-                                <p><a href="tel:+78127778899">+7 (812) 777-88-99</a></p>
+                                <p><a href="tel:+79312727233">+7 (931) 272-72-33</a></p>
                             </div>
                         </div>
 
@@ -422,13 +380,13 @@
                         <div class="social-links">
                             <h3>Социальные сети</h3>
                             <div class="social-icons">
-                                <a href="#" class="social-link vk" target="_blank">
+                                <a href="https://vk.com/public218463119" class="social-link vk" target="_blank">
                                     <span>ВКонтакте</span>
                                 </a>
-                                <a href="#" class="social-link telegram" target="_blank">
+                                <a href="@ElenaVasileva3001" class="social-link telegram" target="_blank">
                                     <span>Telegram</span>
                                 </a>
-                                <a href="#" class="social-link instagram" target="_blank">
+                                <a href="https://www.instagram.com/elenavasileva.psy?igsh=MXNic3E3NGlvMXZoMA==" class="social-link instagram" target="_blank">
                                     <span>Instagram</span>
                                 </a>
                             </div>
@@ -467,36 +425,7 @@
                         </div>
                     </div>
 
-                    <div class="quick-payment">
-                        <h3>Быстрая оплата</h3>
-                        <p>Выберите услугу для оплаты:</p>
-                        
-                        <div class="payment-options">
-                            <div class="payment-option" data-service="individual-online" data-price="3000">
-                                <h4>Индивидуальная консультация (онлайн)</h4>
-                                <span class="price">3 000 ₽</span>
-                                <button class="btn btn-primary pay-btn">Оплатить</button>
-                            </div>
-                            
-                            <div class="payment-option" data-service="individual-offline" data-price="3500">
-                                <h4>Индивидуальная консультация (очно)</h4>
-                                <span class="price">3 500 ₽</span>
-                                <button class="btn btn-primary pay-btn">Оплатить</button>
-                            </div>
-                            
-                            <div class="payment-option" data-service="family-online" data-price="4000">
-                                <h4>Семейная терапия (онлайн)</h4>
-                                <span class="price">4 000 ₽</span>
-                                <button class="btn btn-primary pay-btn">Оплатить</button>
-                            </div>
-                            
-                            <div class="payment-option" data-service="family-offline" data-price="4500">
-                                <h4>Семейная терапия (очно)</h4>
-                                <span class="price">4 500 ₽</span>
-                                <button class="btn btn-primary pay-btn">Оплатить</button>
-                            </div>
-                        </div>
-                    </div>
+                   
                 </div>
             </div>
         </section>
@@ -512,7 +441,7 @@
                     <p>Санкт-Петербург • Онлайн</p>
                 </div>
                 <div class="footer-contacts">
-                    <p>📞 <a href="tel:+78127778899">+7 (812) 777-88-99</a></p>
+                    <p>📞 <a href="tel:+79312727233">+7 (931) 272-72-33</a></p>
                     <p>✉️ <a href="mailto:elena.vasileva.psy@gmail.com">elena.vasileva.psy@gmail.com</a></p>
                 </div>
                 <div class="footer-social">

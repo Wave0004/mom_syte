@@ -102,15 +102,8 @@ function initScrollAnimations() {
 
 // Инициализация форм
 function initForms() {
-    // Форма записи на прием
-    if (appointmentForm) {
-        appointmentForm.addEventListener('submit', handleAppointmentSubmit);
-    }
-
-    // Форма отзыва
-    if (reviewForm) {
-        reviewForm.addEventListener('submit', handleReviewSubmit);
-    }
+    // Форма записи работает через кнопку email (onclick="sendViaEmail()")
+    // Форма отзыва работает через кнопку email (onclick="sendReviewViaEmail()")
 
     // Валидация телефона
     const phoneInput = document.getElementById('phone');
@@ -124,6 +117,129 @@ function initForms() {
         const today = new Date().toISOString().split('T')[0];
         dateInput.setAttribute('min', today);
     }
+
+    // Инициализация интерактивных звезд рейтинга
+    initRatingStars();
+}
+
+// Инициализация интерактивных звезд
+function initRatingStars() {
+    const ratingContainer = document.querySelector('.rating-input');
+    if (!ratingContainer) return;
+
+    const stars = ratingContainer.querySelectorAll('label');
+    const radioInputs = ratingContainer.querySelectorAll('input[type="radio"]');
+
+    // Обработчики для каждой звезды
+    stars.forEach((star, index) => {
+        star.addEventListener('click', function() {
+            // Получаем значение рейтинга (5-звезд сверху, 1-звезда снизу)
+            const ratingValue = 5 - index;
+            
+            // Отмечаем соответствующий radio input
+            const targetRadio = document.getElementById(`star${ratingValue}`);
+            if (targetRadio) {
+                targetRadio.checked = true;
+            }
+            
+            // Обновляем визуальное отображение
+            updateStarsDisplay(ratingValue);
+            
+            // Показываем выбранный рейтинг
+            showRatingFeedback(ratingValue);
+        });
+
+        // Эффект наведения
+        star.addEventListener('mouseenter', function() {
+            const ratingValue = 5 - index;
+            highlightStars(ratingValue);
+        });
+    });
+
+    // Сброс подсветки при уходе мыши с контейнера
+    ratingContainer.addEventListener('mouseleave', function() {
+        const checkedInput = ratingContainer.querySelector('input[type="radio"]:checked');
+        if (checkedInput) {
+            const checkedValue = parseInt(checkedInput.value.charAt(0));
+            updateStarsDisplay(checkedValue);
+        } else {
+            resetStars();
+        }
+    });
+}
+
+// Обновление отображения звезд
+function updateStarsDisplay(rating) {
+    const stars = document.querySelectorAll('.rating-input label');
+    stars.forEach((star, index) => {
+        const starValue = 5 - index;
+        if (starValue <= rating) {
+            star.style.color = '#FFD700';
+            star.classList.add('active');
+        } else {
+            star.style.color = '#E0E0E0';
+            star.classList.remove('active');
+        }
+    });
+}
+
+// Подсветка звезд при наведении
+function highlightStars(rating) {
+    const stars = document.querySelectorAll('.rating-input label');
+    stars.forEach((star, index) => {
+        const starValue = 5 - index;
+        if (starValue <= rating) {
+            star.style.color = '#FFD700';
+            star.style.transform = 'scale(1.1)';
+        } else {
+            star.style.color = '#E0E0E0';
+            star.style.transform = 'scale(1)';
+        }
+    });
+}
+
+// Сброс звезд
+function resetStars() {
+    const stars = document.querySelectorAll('.rating-input label');
+    stars.forEach(star => {
+        star.style.color = '#E0E0E0';
+        star.style.transform = 'scale(1)';
+        star.classList.remove('active');
+    });
+}
+
+// Показать обратную связь о выбранном рейтинге
+function showRatingFeedback(rating) {
+    // Удаляем предыдущую обратную связь
+    const existingFeedback = document.querySelector('.rating-feedback');
+    if (existingFeedback) {
+        existingFeedback.remove();
+    }
+
+    // Создаем новую обратную связь
+    const feedback = document.createElement('div');
+    feedback.className = 'rating-feedback';
+    feedback.style.cssText = `
+        margin-top: 0.5rem;
+        color: var(--primary-color);
+        font-weight: 500;
+        font-size: 0.9rem;
+        animation: fadeInUp 0.3s ease;
+    `;
+
+    const ratingTexts = {
+        1: '1 звезда - Плохо',
+        2: '2 звезды - Неудовлетворительно', 
+        3: '3 звезды - Удовлетворительно',
+        4: '4 звезды - Хорошо',
+        5: '5 звезд - Отлично!'
+    };
+
+    feedback.innerHTML = `✨ Выбрано: ${ratingTexts[rating]}`;
+
+    // Добавляем после контейнера рейтинга
+    const ratingContainer = document.querySelector('.rating-input');
+    ratingContainer.parentNode.insertBefore(feedback, ratingContainer.nextSibling);
 }
 
 // Форматирование номера телефона
@@ -140,145 +256,9 @@ function formatPhoneNumber(e) {
     }
 }
 
-// Обработка формы записи на прием
-async function handleAppointmentSubmit(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(appointmentForm);
-    const data = Object.fromEntries(formData);
-    
-    // Нормализуем названия полей для валидации
-    const normalizedData = {
-        name: data['Имя клиента'],
-        phone: data['Телефон для связи'],
-        email: data['Email клиента'],
-        format: data['Формат консультации'],
-        service: data['Тип услуги'],
-        date: data['Желаемая дата'],
-        time: data['Желаемое время'],
-        message: data['Дополнительная информация от клиента'],
-        privacy: data['privacy']
-    };
-    
-    // Валидация
-    if (!validateAppointmentForm(normalizedData)) {
-        return;
-    }
+// Форма записи теперь работает только через email - простое и надежное решение
 
-    // Показать загрузку
-    showFormLoader(appointmentForm);
-
-    try {
-        // Отправка через Formspree
-        const response = await fetch(appointmentForm.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
-
-        if (response.ok) {
-            // Сохранить данные локально
-            appointmentData.push({
-                ...normalizedData,
-                id: Date.now(),
-                timestamp: new Date().toISOString()
-            });
-
-            // Показать успех
-            showFormResult(appointmentForm, 'success', 
-                'Заявка успешно отправлена! Уведомление пришло психологу на email. ' +
-                'Елена свяжется с вами в течение 24 часов для подтверждения записи.');
-            appointmentForm.reset();
-        } else {
-            throw new Error('Ошибка сервера');
-        }
-
-    } catch (error) {
-        console.error('Ошибка отправки:', error);
-        showFormResult(appointmentForm, 'error', 
-            'Произошла ошибка при отправке заявки. Проверьте интернет соединение и попробуйте еще раз. ' +
-            'Или свяжитесь напрямую по телефону: +7 (812) 777-88-99');
-    } finally {
-        // Убрать загрузку
-        const submitBtn = appointmentForm.querySelector('button[type="submit"]');
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Отправить заявку';
-        }
-    }
-}
-
-// Обработка формы отзыва
-async function handleReviewSubmit(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(reviewForm);
-    const data = Object.fromEntries(formData);
-    
-    // Нормализуем названия полей для валидации
-    const normalizedData = {
-        reviewName: data['Имя автора отзыва'],
-        reviewService: data['Услуга по которой отзыв'],
-        rating: data['Оценка в звездах']?.replace(' звезд', '').replace(' звезды', '').replace(' звезда', ''),
-        reviewText: data['Текст отзыва']
-    };
-    
-    if (!validateReviewForm(normalizedData)) {
-        return;
-    }
-
-    showFormLoader(reviewForm);
-
-    try {
-        // Отправка через Formspree
-        const response = await fetch(reviewForm.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'Accept': 'application/json'
-            }
-        });
-
-        if (response.ok) {
-            // Создать новый отзыв для отображения на сайте
-            const newReview = {
-                id: Date.now(),
-                name: normalizedData.reviewName,
-                service: normalizedData.reviewService,
-                rating: parseInt(normalizedData.rating),
-                text: normalizedData.reviewText,
-                timestamp: new Date().toISOString()
-            };
-
-            // Добавить в массив
-            reviewsData.push(newReview);
-
-            // Добавить отзыв на страницу сразу
-            addReviewToPage(newReview);
-            
-            showFormResult(reviewForm, 'success', 
-                'Спасибо за ваш отзыв! Уведомление отправлено психологу. ' +
-                'Отзыв добавлен на сайт и будет проверен в ближайшее время.');
-            reviewForm.reset();
-        } else {
-            throw new Error('Ошибка сервера');
-        }
-
-    } catch (error) {
-        console.error('Ошибка отправки отзыва:', error);
-        showFormResult(reviewForm, 'error', 
-            'Произошла ошибка при отправке отзыва. Проверьте интернет соединение и попробуйте еще раз.');
-    } finally {
-        // Убрать загрузку
-        const submitBtn = reviewForm.querySelector('button[type="submit"]');
-        if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Отправить отзыв';
-        }
-    }
-}
+// Форма отзывов теперь тоже работает через email - простое и надежное решение
 
 // Валидация формы записи
 function validateAppointmentForm(data) {
@@ -469,51 +449,51 @@ function initMap() {
     });
 }
 
-// Инициализация системы оплаты
-function initPayment() {
-    payButtons.forEach(button => {
-        button.addEventListener('click', handlePayment);
-    });
-}
+// // Инициализация системы оплаты
+// function initPayment() {
+//     payButtons.forEach(button => {
+//         button.addEventListener('click', handlePayment);
+//     });
+// }
 
-// Обработка оплаты
-async function handlePayment(e) {
-    const paymentOption = e.target.closest('.payment-option');
-    const service = paymentOption.dataset.service;
-    const price = paymentOption.dataset.price;
+// // Обработка оплаты
+// async function handlePayment(e) {
+//     const paymentOption = e.target.closest('.payment-option');
+//     const service = paymentOption.dataset.service;
+//     const price = paymentOption.dataset.price;
     
-    // Показать загрузку
-    e.target.disabled = true;
-    e.target.innerHTML = '<div class="loader"></div>';
+//     // Показать загрузку
+//     e.target.disabled = true;
+//     e.target.innerHTML = '<div class="loader"></div>';
 
-    try {
-        // Здесь будет интеграция с реальной платежной системой
-        // Пример для ЮKassa
-        await simulatePayment(service, price);
+//     try {
+//         // Здесь будет интеграция с реальной платежной системой
+//         // Пример для ЮKassa
+//         await simulatePayment(service, price);
         
-        alert(`Переход к оплате услуги на сумму ${price} ₽.\nВ реальной версии здесь будет интеграция с ЮKassa или другой платежной системой.`);
+//         alert(`Переход к оплате услуги на сумму ${price} ₽.\nВ реальной версии здесь будет интеграция с ЮKassa или другой платежной системой.`);
         
-    } catch (error) {
-        console.error('Ошибка при инициализации оплаты:', error);
-        alert('Произошла ошибка при инициализации оплаты. Попробуйте еще раз.');
-    } finally {
-        // Вернуть кнопку в исходное состояние
-        setTimeout(() => {
-            e.target.disabled = false;
-            e.target.innerHTML = 'Оплатить';
-        }, 1000);
-    }
-}
+//     } catch (error) {
+//         console.error('Ошибка при инициализации оплаты:', error);
+//         alert('Произошла ошибка при инициализации оплаты. Попробуйте еще раз.');
+//     } finally {
+//         // Вернуть кнопку в исходное состояние
+//         setTimeout(() => {
+//             e.target.disabled = false;
+//             e.target.innerHTML = 'Оплатить';
+//         }, 1000);
+//     }
+// }
 
-// Симуляция оплаты (заменить на реальную интеграцию)
-function simulatePayment(service, price) {
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            console.log(`Инициализация оплаты для ${service} на сумму ${price} ₽`);
-            resolve();
-        }, 1000);
-    });
-}
+// // Симуляция оплаты (заменить на реальную интеграцию)
+// function simulatePayment(service, price) {
+//     return new Promise((resolve) => {
+//         setTimeout(() => {
+//             console.log(`Инициализация оплаты для ${service} на сумму ${price} ₽`);
+//             resolve();
+//         }, 1000);
+//     });
+// }
 
 // Модальные окна для документов
 function openDocumentModal(documentId) {
@@ -586,11 +566,150 @@ function updatePrices(newPrices) {
     console.log('Обновление цен:', newPrices);
 }
 
+// Функция отправки через email
+function sendViaEmail() {
+    const form = document.getElementById('appointmentForm');
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    
+    const normalizedData = {
+        name: data['Имя клиента'],
+        phone: data['Телефон для связи'],
+        email: data['Email клиента'],
+        format: data['Формат консультации'],
+        service: data['Тип услуги'],
+        date: data['Желаемая дата'],
+        time: data['Желаемое время'],
+        message: data['Дополнительная информация от клиента'],
+        privacy: data['privacy']
+    };
+    
+    // Валидация
+    if (!validateAppointmentForm(normalizedData)) {
+        return;
+    }
+    
+    // Сохранить данные локально
+    appointmentData.push({
+        ...normalizedData,
+        id: Date.now(),
+        timestamp: new Date().toISOString()
+    });
+    
+    const mailtoData = `
+🔔 ЗАЯВКА НА КОНСУЛЬТАЦИЮ
+
+👤 Имя: ${normalizedData.name}
+📞 Телефон: ${normalizedData.phone}
+📧 Email: ${normalizedData.email || 'Не указан'}
+💻 Формат: ${normalizedData.format}
+🎯 Услуга: ${normalizedData.service}
+📅 Дата: ${normalizedData.date || 'Не указана'}
+🕐 Время: ${normalizedData.time || 'Не указано'}
+
+💬 Дополнительная информация:
+${normalizedData.message || 'Нет дополнительной информации'}
+
+---
+Отправлено с сайта психолога Васильевой Елены
+    `.trim();
+    
+    const mailtoLink = `mailto:wave.capuletti@gmail.com?subject=🔔 Новая заявка на консультацию - Сайт психолога&body=${encodeURIComponent(mailtoData)}`;
+    
+    // Открыть email клиент
+    window.open(mailtoLink, '_blank');
+    
+    // Показать сообщение об успехе
+    showFormResult(form, 'success', 
+        '✅ Email клиент открыт с готовым письмом!<br>' +
+        '📧 Отправьте письмо на <strong>wave.capuletti@gmail.com</strong><br>' +
+        'Если email клиент не открылся, позвоните: <strong>+7 (812) 777-88-99</strong>');
+    
+    // Очистить форму
+    form.reset();
+}
+
+// Функция отправки отзыва через email
+function sendReviewViaEmail() {
+    const form = document.getElementById('reviewForm');
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    
+    const normalizedData = {
+        reviewName: data['Имя автора отзыва'],
+        reviewService: data['Услуга по которой отзыв'],
+        rating: data['Оценка в звездах']?.replace(' звезд', '').replace(' звезды', '').replace(' звезда', ''),
+        reviewText: data['Текст отзыва']
+    };
+    
+    // Валидация
+    if (!validateReviewForm(normalizedData)) {
+        return;
+    }
+    
+    // Создать новый отзыв для отображения на сайте
+    const newReview = {
+        id: Date.now(),
+        name: normalizedData.reviewName,
+        service: normalizedData.reviewService,
+        rating: parseInt(normalizedData.rating || 5),
+        text: normalizedData.reviewText,
+        timestamp: new Date().toISOString()
+    };
+
+    // Добавить в массив
+    reviewsData.push(newReview);
+
+    // Добавить отзыв на страницу сразу
+    addReviewToPage(newReview);
+    
+    const ratingStars = '⭐'.repeat(parseInt(normalizedData.rating || 5));
+    
+    const mailtoData = `
+⭐ НОВЫЙ ОТЗЫВ НА САЙТЕ
+
+👤 Имя: ${normalizedData.reviewName}
+🎯 Услуга: ${normalizedData.reviewService || 'Не указана'}
+⭐ Оценка: ${ratingStars} (${normalizedData.rating || 5} из 5)
+
+💬 Текст отзыва:
+${normalizedData.reviewText}
+
+---
+Отправлено с сайта психолога Васильевой Елены
+    `.trim();
+    
+    const mailtoLink = `mailto:wave.capuletti@gmail.com?subject=⭐ Новый отзыв на сайте психолога&body=${encodeURIComponent(mailtoData)}`;
+    
+    // Открыть email клиент
+    window.open(mailtoLink, '_blank');
+    
+    // Показать сообщение об успехе
+    showFormResult(form, 'success', 
+        '⭐ Спасибо за ваш отзыв! Email клиент открыт с готовым письмом.<br>' +
+        '📧 Отправьте письмо на <strong>wave.capuletti@gmail.com</strong><br>' +
+        'Отзыв добавлен на сайт!');
+    
+    // Очистить форму
+    form.reset();
+    
+    // Сбросить рейтинг звезд
+    resetStars();
+    
+    // Удалить обратную связь рейтинга
+    const existingFeedback = document.querySelector('.rating-feedback');
+    if (existingFeedback) {
+        existingFeedback.remove();
+    }
+}
+
 // Экспорт функций для глобального доступа
 window.openDocumentModal = openDocumentModal;
 window.getAppointmentData = getAppointmentData;
 window.getReviewsData = getReviewsData;
 window.updatePrices = updatePrices;
+window.sendViaEmail = sendViaEmail;
+window.sendReviewViaEmail = sendReviewViaEmail;
 
 // Логирование для отладки
 console.log('Сайт психолога инициализирован');

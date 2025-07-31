@@ -20,7 +20,7 @@
 
 На:
 ```html
-<img src="images/photo.jpg" alt="Психолог Васильева Елена" class="psychologist-photo">
+<img src="images/photo.jpg"  alt="Психолог Васильева Елена" class="psychologist-photo">
 ```
 
 ### 3. Добавьте стили в `styles.css`:
