@@ -735,7 +735,7 @@ async function sendReviewViaEmail() {
 // Настройки Telegram бота (ЗАМЕНИТЕ НА ВАШИ ДАННЫЕ!)
 const TELEGRAM_CONFIG = {
     BOT_TOKEN: '8474353441:AAEDKFK8BeXZb0S57LSZB9bgvBLV1Ql2D78', // Токен вашего бота от @BotFather
-    CHAT_ID: '595748767'      // ID чата, куда отправлять сообщения (ЗАМЕНИТЕ ЕСЛИ НУЖНО)
+    CHAT_ID: '-1002705276542'      // ID чата, куда отправлять сообщения (ЗАМЕНИТЕ ЕСЛИ НУЖНО)
 };
 
 // Основная функция отправки в Telegram
