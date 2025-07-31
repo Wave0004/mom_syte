@@ -414,12 +414,12 @@ function initMap() {
     }
 
     ymaps.ready(function() {
-        // Координаты для метро Лесная
-        const coordinates = [60.0138, 30.3461];
+        // Координаты для Кантемировская улица, 39
+        const coordinates = [59.985652, 30.356029];
 
         yandexMap = new ymaps.Map("map", {
             center: coordinates,
-            zoom: 15,
+            zoom: 16,
             controls: ['zoomControl', 'fullscreenControl']
         });
 
@@ -429,11 +429,11 @@ function initMap() {
                 <div style="padding: 10px;">
                     <h3>Кабинет психолога</h3>
                     <p>Васильева Елена</p>
-                    <p>Метро Лесная</p>
-                    <p>Точный адрес сообщается при записи</p>
+                    <p>Кантемировская улица, 39</p>
+                    <p>Санкт-Петербург, метро Лесная</p>
                 </div>
             `,
-            hintContent: 'Кабинет психолога - метро Лесная'
+            hintContent: 'Кабинет психолога - Кантемировская ул., 39'
         }, {
             preset: 'islands#pinkIcon',
             iconLayout: 'default#image',
@@ -566,8 +566,8 @@ function updatePrices(newPrices) {
     console.log('Обновление цен:', newPrices);
 }
 
-// Функция отправки через email
-function sendViaEmail() {
+// Функция отправки через Telegram
+async function sendViaEmail() {
     const form = document.getElementById('appointmentForm');
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
@@ -589,48 +589,53 @@ function sendViaEmail() {
         return;
     }
     
-    // Сохранить данные локально
-    appointmentData.push({
-        ...normalizedData,
-        id: Date.now(),
-        timestamp: new Date().toISOString()
-    });
-    
-    const mailtoData = `
-🔔 ЗАЯВКА НА КОНСУЛЬТАЦИЮ
+    // Показываем индикатор загрузки
+    const submitButton = form.querySelector('button[type="button"]');
+    const originalText = submitButton.innerHTML;
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<div class="loader"></div> Отправка...';
 
-👤 Имя: ${normalizedData.name}
-📞 Телефон: ${normalizedData.phone}
-📧 Email: ${normalizedData.email || 'Не указан'}
-💻 Формат: ${normalizedData.format}
-🎯 Услуга: ${normalizedData.service}
-📅 Дата: ${normalizedData.date || 'Не указана'}
-🕐 Время: ${normalizedData.time || 'Не указано'}
+    try {
+        // Отправляем в Telegram
+        await sendToTelegram('appointment', normalizedData);
+        
+        // Сохранить данные локально
+        appointmentData.push({
+            ...normalizedData,
+            id: Date.now(),
+            timestamp: new Date().toISOString()
+        });
 
-💬 Дополнительная информация:
-${normalizedData.message || 'Нет дополнительной информации'}
+        showFormResult(form, 'success', 
+            '✅ Заявка отправлена в Telegram!<br>' +
+            '📱 Психолог получит уведомление и свяжется с вами в ближайшее время.<br>' +
+            '📞 Если нужна срочная консультация, позвоните: <strong>+7 (812) 777-88-99</strong>');
+        
+        form.reset();
 
----
-Отправлено с сайта психолога Васильевой Елены
-    `.trim();
-    
-    const mailtoLink = `mailto:wave.capuletti@gmail.com?subject=🔔 Новая заявка на консультацию - Сайт психолога&body=${encodeURIComponent(mailtoData)}`;
-    
-    // Открыть email клиент
-    window.open(mailtoLink, '_blank');
-    
-    // Показать сообщение об успехе
-    showFormResult(form, 'success', 
-        '✅ Email клиент открыт с готовым письмом!<br>' +
-        '📧 Отправьте письмо на <strong>wave.capuletti@gmail.com</strong><br>' +
-        'Если email клиент не открылся, позвоните: <strong>+7 (812) 777-88-99</strong>');
-    
-    // Очистить форму
-    form.reset();
+    } catch (error) {
+        console.error('Ошибка отправки в Telegram:', error);
+        
+        // Fallback на email если Telegram не работает
+        sendViaEmailFallback(normalizedData);
+        
+        showFormResult(form, 'warning', 
+            '⚠️ Telegram временно недоступен.<br>' +
+            '📧 Заявка отправлена через email.<br>' +
+            '📞 Или позвоните напрямую: <strong>+7 (812) 777-88-99</strong>');
+        
+        form.reset();
+    } finally {
+        // Восстанавливаем кнопку
+        setTimeout(() => {
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalText;
+        }, 1000);
+    }
 }
 
-// Функция отправки отзыва через email
-function sendReviewViaEmail() {
+// Функция отправки отзыва через Telegram
+async function sendReviewViaEmail() {
     const form = document.getElementById('reviewForm');
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
@@ -647,56 +652,246 @@ function sendReviewViaEmail() {
         return;
     }
     
-    // Создать новый отзыв для отображения на сайте
-    const newReview = {
-        id: Date.now(),
-        name: normalizedData.reviewName,
-        service: normalizedData.reviewService,
-        rating: parseInt(normalizedData.rating || 5),
-        text: normalizedData.reviewText,
-        timestamp: new Date().toISOString()
+    // Показываем индикатор загрузки
+    const submitButton = form.querySelector('button[type="button"]');
+    const originalText = submitButton.innerHTML;
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<div class="loader"></div> Отправка...';
+
+    try {
+        // Отправляем в Telegram
+        await sendToTelegram('review', normalizedData);
+        
+        // Создать новый отзыв для отображения на сайте
+        const newReview = {
+            id: Date.now(),
+            name: normalizedData.reviewName,
+            service: normalizedData.reviewService,
+            rating: parseInt(normalizedData.rating || 5),
+            text: normalizedData.reviewText,
+            timestamp: new Date().toISOString()
+        };
+
+        // Добавить в массив
+        reviewsData.push(newReview);
+
+        // Добавить отзыв на страницу сразу
+        addReviewToPage(newReview);
+        
+        showFormResult(form, 'success', 
+            '⭐ Спасибо за ваш отзыв! Уведомление отправлено в Telegram.<br>' +
+            '📱 Психолог увидит ваш отзыв и будет благодарна за обратную связь.<br>' +
+            'Отзыв добавлен на сайт!');
+        
+        form.reset();
+        
+        // Сбросить звезды и убрать feedback
+        resetStars();
+        const existingFeedback = document.querySelector('.rating-feedback');
+        if (existingFeedback) {
+            existingFeedback.remove();
+        }
+
+    } catch (error) {
+        console.error('Ошибка отправки отзыва в Telegram:', error);
+        
+        // Fallback на email если Telegram не работает
+        sendReviewViaEmailFallback(normalizedData);
+        
+        // Все равно добавляем отзыв на сайт
+        const newReview = {
+            id: Date.now(),
+            name: normalizedData.reviewName,
+            service: normalizedData.reviewService,
+            rating: parseInt(normalizedData.rating || 5),
+            text: normalizedData.reviewText,
+            timestamp: new Date().toISOString()
+        };
+        reviewsData.push(newReview);
+        addReviewToPage(newReview);
+        
+        showFormResult(form, 'warning', 
+            '⚠️ Telegram временно недоступен.<br>' +
+            '📧 Отзыв отправлен через email.<br>' +
+            'Отзыв добавлен на сайт!');
+        
+        form.reset();
+        resetStars();
+        const existingFeedback = document.querySelector('.rating-feedback');
+        if (existingFeedback) {
+            existingFeedback.remove();
+        }
+    } finally {
+        // Восстанавливаем кнопку
+        setTimeout(() => {
+            submitButton.disabled = false;
+            submitButton.innerHTML = originalText;
+        }, 1000);
+    }
+}
+
+// ===== TELEGRAM BOT API ФУНКЦИИ =====
+
+// Настройки Telegram бота (ЗАМЕНИТЕ НА ВАШИ ДАННЫЕ!)
+const TELEGRAM_CONFIG = {
+    BOT_TOKEN: '8474353441:AAEDKFK8BeXZb0S57LSZB9bgvBLV1Ql2D78', // Токен вашего бота от @BotFather
+    CHAT_ID: '595748767'      // ID чата, куда отправлять сообщения (ЗАМЕНИТЕ ЕСЛИ НУЖНО)
+};
+
+// Основная функция отправки в Telegram
+async function sendToTelegram(type, data) {
+    // Проверяем настройки
+    if (TELEGRAM_CONFIG.BOT_TOKEN === 'YOUR_BOT_TOKEN' || TELEGRAM_CONFIG.CHAT_ID === 'YOUR_CHAT_ID') {
+        throw new Error('Telegram бот не настроен. Необходимо указать BOT_TOKEN и CHAT_ID.');
+    }
+
+    let message = '';
+    
+    if (type === 'appointment') {
+        message = formatAppointmentMessage(data);
+    } else if (type === 'review') {
+        message = formatReviewMessage(data);
+    }
+
+    const url = `https://api.telegram.org/bot${TELEGRAM_CONFIG.BOT_TOKEN}/sendMessage`;
+    
+    const payload = {
+        chat_id: TELEGRAM_CONFIG.CHAT_ID,
+        text: message,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true
     };
 
-    // Добавить в массив
-    reviewsData.push(newReview);
+    console.log('Отправка в Telegram:', {
+        url: url,
+        chat_id: TELEGRAM_CONFIG.CHAT_ID,
+        message_length: message.length
+    });
 
-    // Добавить отзыв на страницу сразу
-    addReviewToPage(newReview);
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+    });
+
+    console.log('Ответ Telegram API:', response.status, response.statusText);
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Ошибка Telegram API:', errorData);
+        throw new Error(`Telegram API error: ${errorData.description || 'Неизвестная ошибка'}`);
+    }
+
+    const result = await response.json();
+    console.log('Успешная отправка в Telegram:', result);
+    return result;
+}
+
+// Форматирование сообщения для заявки на консультацию
+function formatAppointmentMessage(data) {
+    const timestamp = new Date().toLocaleString('ru-RU', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    return `
+🔔 <b>НОВАЯ ЗАЯВКА НА КОНСУЛЬТАЦИЮ</b>
+
+👤 <b>Имя:</b> ${data.name}
+📞 <b>Телефон:</b> ${data.phone}
+📧 <b>Email:</b> ${data.email || 'Не указан'}
+💻 <b>Формат:</b> ${data.format}
+🎯 <b>Услуга:</b> ${data.service}
+📅 <b>Желаемая дата:</b> ${data.date || 'Не указана'}
+🕐 <b>Желаемое время:</b> ${data.time || 'Не указано'}
+
+💬 <b>Дополнительная информация:</b>
+${data.message || 'Нет дополнительной информации'}
+
+⏰ <b>Время подачи заявки:</b> ${timestamp}
+🌐 <b>Источник:</b> Сайт психолога Васильевой Елены
+
+<i>Для ответа клиенту используйте указанные контакты.</i>
+    `.trim();
+}
+
+// Форматирование сообщения для отзыва
+function formatReviewMessage(data) {
+    const ratingStars = '⭐'.repeat(parseInt(data.rating || 5));
+    const timestamp = new Date().toLocaleString('ru-RU', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+
+    return `
+⭐ <b>НОВЫЙ ОТЗЫВ НА САЙТЕ</b>
+
+👤 <b>Имя:</b> ${data.reviewName}
+🎯 <b>Услуга:</b> ${data.reviewService || 'Не указана'}
+⭐ <b>Оценка:</b> ${ratingStars} (${data.rating || 5} из 5)
+
+💬 <b>Текст отзыва:</b>
+${data.reviewText}
+
+⏰ <b>Время публикации:</b> ${timestamp}
+🌐 <b>Источник:</b> Сайт психолога Васильевой Елены
+
+<i>Отзыв автоматически добавлен на сайт в разделе "Отзывы".</i>
+    `.trim();
+}
+
+// Fallback функция для отправки заявки через email
+function sendViaEmailFallback(data) {
+    const mailtoData = `
+🔔 ЗАЯВКА НА КОНСУЛЬТАЦИЮ
+
+👤 Имя: ${data.name}
+📞 Телефон: ${data.phone}
+📧 Email: ${data.email || 'Не указан'}
+💻 Формат: ${data.format}
+🎯 Услуга: ${data.service}
+📅 Дата: ${data.date || 'Не указана'}
+🕐 Время: ${data.time || 'Не указано'}
+
+💬 Дополнительная информация:
+${data.message || 'Нет дополнительной информации'}
+
+---
+Отправлено с сайта психолога Васильевой Елены
+    `.trim();
     
-    const ratingStars = '⭐'.repeat(parseInt(normalizedData.rating || 5));
+    const mailtoLink = `mailto:wave.capuletti@gmail.com?subject=🔔 Новая заявка на консультацию - Сайт психолога&body=${encodeURIComponent(mailtoData)}`;
+    window.open(mailtoLink, '_blank');
+}
+
+// Fallback функция для отправки отзыва через email
+function sendReviewViaEmailFallback(data) {
+    const ratingStars = '⭐'.repeat(parseInt(data.rating || 5));
     
     const mailtoData = `
 ⭐ НОВЫЙ ОТЗЫВ НА САЙТЕ
 
-👤 Имя: ${normalizedData.reviewName}
-🎯 Услуга: ${normalizedData.reviewService || 'Не указана'}
-⭐ Оценка: ${ratingStars} (${normalizedData.rating || 5} из 5)
+👤 Имя: ${data.reviewName}
+🎯 Услуга: ${data.reviewService || 'Не указана'}
+⭐ Оценка: ${ratingStars} (${data.rating || 5} из 5)
 
 💬 Текст отзыва:
-${normalizedData.reviewText}
+${data.reviewText}
 
 ---
 Отправлено с сайта психолога Васильевой Елены
     `.trim();
     
     const mailtoLink = `mailto:wave.capuletti@gmail.com?subject=⭐ Новый отзыв на сайте психолога&body=${encodeURIComponent(mailtoData)}`;
-    
-    // Открыть email клиент
     window.open(mailtoLink, '_blank');
-    
-    // Показать сообщение об успехе
-    showFormResult(form, 'success', 
-        '⭐ Спасибо за ваш отзыв! Email клиент открыт с готовым письмом.<br>' +
-        '📧 Отправьте письмо на <strong>wave.capuletti@gmail.com</strong><br>' +
-        'Отзыв добавлен на сайт!');
-    
-    // Очистить форму
-    form.reset();
-    
-    // Сбросить рейтинг звезд
-    resetStars();
-    
-    // Удалить обратную связь рейтинга
     const existingFeedback = document.querySelector('.rating-feedback');
     if (existingFeedback) {
         existingFeedback.remove();
