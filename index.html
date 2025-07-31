@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Психолог Васильева Елена - Профессиональная психологическая помощь</title>
+    <meta name="description" content="Психолог Васильева Елена в Санкт-Петербурге. Опыт работы 5 лет. Индивидуальные консультации очно и онлайн. Запись на прием.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=YOUR_API_KEY&lang=ru_RU" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+    <!-- Заголовок и навигация -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-container">
+                <div class="logo">
+                    <h1>Елена Васильева</h1>
+                    <p>Психолог</p>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#about" class="nav-link">Обо мне</a></li>
+                    <li><a href="#services" class="nav-link">Услуги</a></li>
+                    <li><a href="#appointment" class="nav-link">Запись</a></li>
+                    <li><a href="#reviews" class="nav-link">Отзывы</a></li>
+                    <li><a href="#documents" class="nav-link">Документы</a></li>
+                    <li><a href="#contacts" class="nav-link">Контакты</a></li>
+                </ul>
+                <div class="burger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Главная секция -->
+    <main>
+        <section class="hero" id="about">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h2 class="hero-title">Профессиональная психологическая помощь</h2>
+                        <p class="hero-subtitle">Опыт работы более 5 лет</p>
+                        <p class="hero-description">
+                            Здравствуйте! Меня зовут Елена Васильева, и я практикующий психолог. 
+                            Я помогаю людям справляться с жизненными трудностями, находить внутренние ресурсы 
+                            и достигать психологического благополучия.
+                        </p>
+                        <div class="hero-features">
+                            <div class="feature">
+                                <span class="feature-icon">📍</span>
+                                <span>Очные консультации у метро Лесная</span>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">💻</span>
+                                <span>Онлайн консультации с видеосвязью</span>
+                            </div>
+                            <div class="feature">
+                                <span class="feature-icon">🎓</span>
+                                <span>5 лет практического опыта</span>
+                            </div>
+                        </div>
+                        <div class="hero-buttons">
+                            <a href="#appointment" class="btn btn-primary">Записаться на консультацию</a>
+                            <a href="#services" class="btn btn-secondary">Узнать цены</a>
+                        </div>
+                    </div>
+                    <div class="hero-image">
+                        <div class="image-placeholder">
+                            <span>Фото психолога</span>
+                            <p>Здесь будет размещено ваше фото</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Услуги и цены -->
+        <section class="services" id="services">
+            <div class="container">
+                <h2 class="section-title">Услуги и цены</h2>
+                <div class="services-grid">
+                    <div class="service-card">
+                        <div class="service-icon">🧠</div>
+                        <h3>Индивидуальная консультация</h3>
+                        <p>Работа с личными запросами, проблемами в отношениях, тревожностью, депрессией</p>
+                        <div class="service-price">
+                            <span class="price-online">Онлайн: 3 000 ₽</span>
+                            <span class="price-offline">Очно: 3 500 ₽</span>
+                        </div>
+                        <div class="service-duration">50 минут</div>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">💑</div>
+                        <h3>Семейная терапия</h3>
+                        <p>Работа с парами, решение семейных конфликтов, улучшение коммуникации</p>
+                        <div class="service-price">
+                            <span class="price-online">Онлайн: 4 000 ₽</span>
+                            <span class="price-offline">Очно: 4 500 ₽</span>
+                        </div>
+                        <div class="service-duration">60 минут</div>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="service-icon">🎯</div>
+                        <h3>Коррекция поведения</h3>
+                        <p>Работа с вредными привычками, развитие эмоционального интеллекта</p>
+                        <div class="service-price">
+                            <span class="price-online">Онлайн: 3 200 ₽</span>
+                            <span class="price-offline">Очно: 3 700 ₽</span>
+                        </div>
+                        <div class="service-duration">50 минут</div>
+                    </div>
+
+                    <div class="service-card popular">
+                        <div class="popular-badge">Популярно</div>
+                        <div class="service-icon">📦</div>
+                        <h3>Пакет из 5 сессий</h3>
+                        <p>Комплексная работа с возможностью системного подхода к решению проблем</p>
+                        <div class="service-price">
+                            <span class="price-online">Онлайн: 14 000 ₽</span>
+                            <span class="price-offline">Очно: 16 000 ₽</span>
+                        </div>
+                        <div class="service-duration">5 x 50 минут</div>
+                        <div class="service-discount">Скидка 7%</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Форма записи -->
+        <section class="appointment" id="appointment">
+            <div class="container">
+                <h2 class="section-title">Записаться на консультацию</h2>
+                <div class="appointment-content">
+                    <div class="appointment-info">
+                        <h3>Как проходит консультация</h3>
+                        <ul class="appointment-steps">
+                            <li>
+                                <span class="step-number">1</span>
+                                <div>
+                                    <strong>Заполните форму</strong>
+                                    <p>Укажите ваши контактные данные и предпочтительное время</p>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-number">2</span>
+                                <div>
+                                    <strong>Подтверждение</strong>
+                                    <p>Я свяжусь с вами в течение 24 часов для подтверждения</p>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="step-number">3</span>
+                                <div>
+                                    <strong>Консультация</strong>
+                                    <p>Встреча в кабинете или онлайн в согласованное время</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <form class="appointment-form" id="appointmentForm">
+                        <div class="form-group">
+                            <label for="name">Имя *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">Телефон *</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="format">Формат консультации *</label>
+                            <select id="format" name="format" required>
+                                <option value="">Выберите формат</option>
+                                <option value="online">Онлайн</option>
+                                <option value="offline">Очно в кабинете</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="service">Тип консультации *</label>
+                            <select id="service" name="service" required>
+                                <option value="">Выберите услугу</option>
+                                <option value="individual">Индивидуальная консультация</option>
+                                <option value="family">Семейная терапия</option>
+                                <option value="behavior">Коррекция поведения</option>
+                                <option value="package">Пакет из 5 сессий</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="date">Предпочтительная дата</label>
+                            <input type="date" id="date" name="date">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="time">Предпочтительное время</label>
+                            <select id="time" name="time">
+                                <option value="">Выберите время</option>
+                                <option value="09:00">09:00</option>
+                                <option value="10:00">10:00</option>
+                                <option value="11:00">11:00</option>
+                                <option value="12:00">12:00</option>
+                                <option value="13:00">13:00</option>
+                                <option value="14:00">14:00</option>
+                                <option value="15:00">15:00</option>
+                                <option value="16:00">16:00</option>
+                                <option value="17:00">17:00</option>
+                                <option value="18:00">18:00</option>
+                                <option value="19:00">19:00</option>
+                                <option value="20:00">20:00</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Дополнительная информация</label>
+                            <textarea id="message" name="message" rows="4" placeholder="Опишите кратко ваш запрос или вопросы"></textarea>
+                        </div>
+                        
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="privacy" name="privacy" required>
+                                <span class="checkmark"></span>
+                                Я согласен с обработкой персональных данных *
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Отправить заявку</button>
+                        
+                        <div class="form-result" id="formResult"></div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Отзывы -->
+        <section class="reviews" id="reviews">
+            <div class="container">
+                <h2 class="section-title">Отзывы клиентов</h2>
+                
+                <div class="reviews-grid">
+                    <div class="review-card">
+                        <div class="review-rating">
+                            <span>⭐⭐⭐⭐⭐</span>
+                        </div>
+                        <p class="review-text">
+                            "Елена помогла мне справиться с тревожностью. После нескольких сессий я стала чувствовать себя гораздо увереннее. Очень благодарна за профессиональный подход и поддержку."
+                        </p>
+                        <div class="review-author">
+                            <strong>Анна К.</strong>
+                            <span>Индивидуальная консультация</span>
+                        </div>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-rating">
+                            <span>⭐⭐⭐⭐⭐</span>
+                        </div>
+                        <p class="review-text">
+                            "Работали с семейными проблемами. Елена помогла нам найти общий язык и улучшить отношения. Рекомендую всем парам, которые хотят сохранить семью."
+                        </p>
+                        <div class="review-author">
+                            <strong>Дмитрий и Мария</strong>
+                            <span>Семейная терапия</span>
+                        </div>
+                    </div>
+
+                    <div class="review-card">
+                        <div class="review-rating">
+                            <span>⭐⭐⭐⭐⭐</span>
+                        </div>
+                        <p class="review-text">
+                            "Отличный специалист! Помогла разобраться с внутренними конфликтами и найти мотивацию для изменений. Очень комфортная атмосфера на сессиях."
+                        </p>
+                        <div class="review-author">
+                            <strong>Михаил Р.</strong>
+                            <span>Коррекция поведения</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Форма добавления отзыва -->
+                <div class="add-review">
+                    <h3>Оставить отзыв</h3>
+                    <form class="review-form" id="reviewForm">
+                        <div class="form-group">
+                            <label for="reviewName">Имя *</label>
+                            <input type="text" id="reviewName" name="reviewName" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reviewService">Услуга</label>
+                            <select id="reviewService" name="reviewService">
+                                <option value="">Выберите услугу</option>
+                                <option value="individual">Индивидуальная консультация</option>
+                                <option value="family">Семейная терапия</option>
+                                <option value="behavior">Коррекция поведения</option>
+                                <option value="package">Пакет из 5 сессий</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reviewRating">Оценка *</label>
+                            <div class="rating-input">
+                                <input type="radio" id="star5" name="rating" value="5" required>
+                                <label for="star5">⭐</label>
+                                <input type="radio" id="star4" name="rating" value="4">
+                                <label for="star4">⭐</label>
+                                <input type="radio" id="star3" name="rating" value="3">
+                                <label for="star3">⭐</label>
+                                <input type="radio" id="star2" name="rating" value="2">
+                                <label for="star2">⭐</label>
+                                <input type="radio" id="star1" name="rating" value="1">
+                                <label for="star1">⭐</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="reviewText">Ваш отзыв *</label>
+                            <textarea id="reviewText" name="reviewText" rows="4" required placeholder="Поделитесь своим опытом"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-secondary">Отправить отзыв</button>
+                        
+                        <div class="form-result" id="reviewResult"></div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- Документы -->
+        <section class="documents" id="documents">
+            <div class="container">
+                <h2 class="section-title">Документы и квалификация</h2>
+                <div class="documents-grid">
+                    <div class="document-card">
+                        <div class="document-icon">🎓</div>
+                        <h3>Диплом о высшем образовании</h3>
+                        <p>Психология, СПбГУ, 2018</p>
+                        <button class="btn btn-outline" onclick="openDocumentModal('diploma')">Посмотреть</button>
+                    </div>
+
+                    <div class="document-card">
+                        <div class="document-icon">📜</div>
+                        <h3>Сертификат профессиональной переподготовки</h3>
+                        <p>Клиническая психология, 2019</p>
+                        <button class="btn btn-outline" onclick="openDocumentModal('certificate1')">Посмотреть</button>
+                    </div>
+
+                    <div class="document-card">
+                        <div class="document-icon">🏆</div>
+                        <h3>Сертификат повышения квалификации</h3>
+                        <p>Семейная терапия, 2022</p>
+                        <button class="btn btn-outline" onclick="openDocumentModal('certificate2')">Посмотреть</button>
+                    </div>
+
+                    <div class="document-card">
+                        <div class="document-icon">✅</div>
+                        <h3>Сертификат психологического общества</h3>
+                        <p>Членство в РПО, 2020</p>
+                        <button class="btn btn-outline" onclick="openDocumentModal('certificate3')">Посмотреть</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Контакты -->
+        <section class="contacts" id="contacts">
+            <div class="container">
+                <h2 class="section-title">Контакты</h2>
+                <div class="contacts-content">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-icon">📍</div>
+                            <div>
+                                <h3>Адрес кабинета</h3>
+                                <p>Санкт-Петербург, метро Лесная<br>
+                                ул. Лесная, д. 1 (точный адрес уточняется при записи)</p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-icon">📱</div>
+                            <div>
+                                <h3>Телефон</h3>
+                                <p><a href="tel:+79999999999">+7 (999) 999-99-99</a></p>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-icon">✉️</div>
+                            <div>
+                                <h3>Email</h3>
+                                <p><a href="mailto:elena.vasileva@example.com">elena.vasileva@example.com</a></p>
+                            </div>
+                        </div>
+
+                        <div class="social-links">
+                            <h3>Социальные сети</h3>
+                            <div class="social-icons">
+                                <a href="#" class="social-link vk" target="_blank">
+                                    <span>ВКонтакте</span>
+                                </a>
+                                <a href="#" class="social-link telegram" target="_blank">
+                                    <span>Telegram</span>
+                                </a>
+                                <a href="#" class="social-link instagram" target="_blank">
+                                    <span>Instagram</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="map-container">
+                        <div id="map" style="width: 100%; height: 400px;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Оплата -->
+        <section class="payment" id="payment">
+            <div class="container">
+                <h2 class="section-title">Оплата услуг</h2>
+                <div class="payment-content">
+                    <div class="payment-info">
+                        <h3>Способы оплаты</h3>
+                        <ul class="payment-methods">
+                            <li>💳 Банковские карты (Visa, MasterCard, МИР)</li>
+                            <li>💰 Наличные (при очной встрече)</li>
+                            <li>📱 СБП (Система быстрых платежей)</li>
+                            <li>🏦 Банковский перевод</li>
+                        </ul>
+                        
+                        <div class="payment-notice">
+                            <h4>Важная информация:</h4>
+                            <ul>
+                                <li>Оплата производится до начала консультации</li>
+                                <li>При отмене за 24 часа - полный возврат</li>
+                                <li>При отмене менее чем за 24 часа - возврат 50%</li>
+                                <li>Неявка без предупреждения - оплата не возвращается</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="quick-payment">
+                        <h3>Быстрая оплата</h3>
+                        <p>Выберите услугу для оплаты:</p>
+                        
+                        <div class="payment-options">
+                            <div class="payment-option" data-service="individual-online" data-price="3000">
+                                <h4>Индивидуальная консультация (онлайн)</h4>
+                                <span class="price">3 000 ₽</span>
+                                <button class="btn btn-primary pay-btn">Оплатить</button>
+                            </div>
+                            
+                            <div class="payment-option" data-service="individual-offline" data-price="3500">
+                                <h4>Индивидуальная консультация (очно)</h4>
+                                <span class="price">3 500 ₽</span>
+                                <button class="btn btn-primary pay-btn">Оплатить</button>
+                            </div>
+                            
+                            <div class="payment-option" data-service="family-online" data-price="4000">
+                                <h4>Семейная терапия (онлайн)</h4>
+                                <span class="price">4 000 ₽</span>
+                                <button class="btn btn-primary pay-btn">Оплатить</button>
+                            </div>
+                            
+                            <div class="payment-option" data-service="family-offline" data-price="4500">
+                                <h4>Семейная терапия (очно)</h4>
+                                <span class="price">4 500 ₽</span>
+                                <button class="btn btn-primary pay-btn">Оплатить</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Футер -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <h3>Васильева Елена</h3>
+                    <p>Психолог • 5 лет опыта</p>
+                    <p>Санкт-Петербург • Онлайн</p>
+                </div>
+                <div class="footer-contacts">
+                    <p>📞 <a href="tel:+79999999999">+7 (999) 999-99-99</a></p>
+                    <p>✉️ <a href="mailto:elena.vasileva@example.com">elena.vasileva@example.com</a></p>
+                </div>
+                <div class="footer-social">
+                    <a href="#" class="social-link">ВК</a>
+                    <a href="#" class="social-link">TG</a>
+                    <a href="#" class="social-link">IG</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Васильева Елена. Все права защищены.</p>
+                <p>Лицензия на психологическую деятельность</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Модальные окна -->
+    <div id="documentModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="documentContent">
+                <p>Здесь будет отображаться документ. Загрузите изображения ваших документов в папку проекта.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
